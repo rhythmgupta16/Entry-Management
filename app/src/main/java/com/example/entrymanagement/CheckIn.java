@@ -1,7 +1,10 @@
 package com.example.entrymanagement;
 
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.telephony.SmsManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,12 +22,13 @@ public class CheckIn extends AppCompatActivity {
     EditText etVisEmail, etVisPhone, etVisName, etHostName, etHostEmail, etHostPhone, etHostAddress;
     DatabaseReference rootRef, demoRef;
     String checkInTime;
-
+    int perm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_check_in);
+        perm = getIntent().getIntExtra("perm",0);
 
         findViews();
 
@@ -71,7 +75,6 @@ public class CheckIn extends AppCompatActivity {
         final ProgressDialog dialog = new ProgressDialog(CheckIn.this);
         dialog.setTitle("Sending Email");
         dialog.setMessage("Please wait");
-        dialog.show();
         Thread sender = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -81,13 +84,31 @@ public class CheckIn extends AppCompatActivity {
                             Data,
                             "innovaccerpractice@gmail.com",
                             etHostEmail.getText().toString());
-                    dialog.dismiss();
+
                 } catch (Exception e) {
                     Log.e("mylog", "Error: " + e.getMessage());
                 }
             }
         });
+
+        Thread sms = new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                if(perm==1) {
+                    SmsManager smsManager = SmsManager.getDefault();
+                    smsManager.sendTextMessage("+91" + etHostPhone.getText().toString(), null, Data, null, null);
+                }
+                if(perm==0){
+                    //Toast.makeText(getApplicationContext(), "Grant SMS permission first!", Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                    startActivity(intent);
+                }
+            }
+        });
+
         sender.start();
+        sms.start();
     }
 
     private void storeData(String checkInTime){
@@ -101,5 +122,6 @@ public class CheckIn extends AppCompatActivity {
         demoRef.child(etVisPhone.getText().toString()).child("CheckInTime").setValue(checkInTime);
 
     }
+
 
 }
