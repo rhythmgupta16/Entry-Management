@@ -1,8 +1,15 @@
 package com.example.entrymanagement;
 
+import android.app.Activity;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -17,6 +24,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
@@ -24,17 +32,25 @@ import java.util.Map;
 
 public class CheckOut extends AppCompatActivity {
 
+    private static final String TAG ="hi" ;
     EditText etOutVisPhone;
     Button btnSubmit;
     DatabaseReference rootRef, demoRef;
     String checkOutTime;
     Map<String, Object> map;
+    int permission;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_check_out);
+
+        permission = getIntent().getIntExtra("perm",0);
+
+        Toast.makeText(getApplicationContext(), "" + permission, Toast.LENGTH_LONG).show();
+
+
         etOutVisPhone = findViewById(R.id.etOutVisPhone);
         btnSubmit = findViewById(R.id.btnSubmit);
 
@@ -56,12 +72,14 @@ public class CheckOut extends AppCompatActivity {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         map = (Map<String, Object>) dataSnapshot.getValue();
                         String mail = map.get("VisEmail").toString();
-                        Toast.makeText(getApplicationContext(), "" + mail, Toast.LENGTH_LONG).show();
+                        String phone = map.get("VisPhone").toString();
+                        //Toast.makeText(getApplicationContext(), "" + mail, Toast.LENGTH_LONG).show();
                         String data = map.toString();
-                        Toast.makeText(getApplicationContext(), "" + data, Toast.LENGTH_LONG).show();
+                        //Toast.makeText(getApplicationContext(), "" + data, Toast.LENGTH_LONG).show();
                         checkOutTime = getRecentTime();
                         storeData(checkOutTime);
-                        sendMessage(mail,data);
+
+                        sendMessage(mail,data,phone);
                     }
 
                     @Override
@@ -70,13 +88,11 @@ public class CheckOut extends AppCompatActivity {
                 });
 
 
-
-
             }
         });
     }
 
-    private void sendMessage(final String mail, final String data) {
+    private void sendMessage(final String mail, final String data, final String phone) {
 
        // final String Data = "Visit Details\n\n" + "Visitor Name: " + map.get("VisName") + "\nVisitor Phone: " + map.get("VisPhone") +
          //       "\nCheckIn Time: " + map.get("CheckInTime") + "\nCheckOut Time: " + map.get("VisCheckOutTime") + "\nHost Name: " + map.get("HostName") +
@@ -85,10 +101,6 @@ public class CheckOut extends AppCompatActivity {
 
 
 
-        final ProgressDialog dialog = new ProgressDialog(CheckOut.this);
-        dialog.setTitle("Sending Email");
-        dialog.setMessage("Please wait");
-        dialog.show();
         Thread sender = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -98,13 +110,36 @@ public class CheckOut extends AppCompatActivity {
                             ""+data,
                             "innovaccerpractice@gmail.com",
                             ""+mail);
-                    dialog.dismiss();
+
                 } catch (Exception e) {
                     Log.e("mylog", "Error: " + e.getMessage());
                 }
             }
         });
+
+        Thread sms= new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if(permission==1) {
+
+                    Log.e(TAG, "run: 00000" );
+                    SmsManager smsManager = SmsManager.getDefault();
+                    smsManager.sendTextMessage("+91" + phone, null,""+data.substring(1,160), null, null);
+
+                }
+                if(permission==0){
+                    //Toast.makeText(getApplicationContext(), "Grant SMS permission first!", Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                    startActivity(intent);
+                }
+            }
+        });
+
+
+
+
         sender.start();
+        sms.start();
 
     }
 
@@ -122,6 +157,4 @@ public class CheckOut extends AppCompatActivity {
 
 
 
-
 }
-

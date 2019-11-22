@@ -29,6 +29,7 @@ public class CheckIn extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_check_in);
         perm = getIntent().getIntExtra("perm",0);
+        Toast.makeText(getApplicationContext(), "" + perm, Toast.LENGTH_LONG).show();
 
         findViews();
 
@@ -120,8 +121,6 @@ public class CheckIn extends AppCompatActivity {
         demoRef.child(etVisPhone.getText().toString()).child("HostPhone").setValue(etHostPhone.getText().toString());
         demoRef.child(etVisPhone.getText().toString()).child("HostAddress").setValue(etHostAddress.getText().toString());
         demoRef.child(etVisPhone.getText().toString()).child("CheckInTime").setValue(checkInTime);
-
     }
-
 
 }
