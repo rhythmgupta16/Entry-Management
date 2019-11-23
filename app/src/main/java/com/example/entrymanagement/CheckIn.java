@@ -76,7 +76,7 @@ public class CheckIn extends AppCompatActivity {
         final ProgressDialog dialog = new ProgressDialog(CheckIn.this);
         dialog.setTitle("Sending Email");
         dialog.setMessage("Please wait");
-        Thread sender = new Thread(new Runnable() {
+        final Thread sender = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -92,7 +92,7 @@ public class CheckIn extends AppCompatActivity {
             }
         });
 
-        Thread sms = new Thread(new Runnable() {
+        final Thread sms = new Thread(new Runnable() {
             @Override
             public void run() {
 
@@ -110,6 +110,21 @@ public class CheckIn extends AppCompatActivity {
 
         sender.start();
         sms.start();
+
+        Thread checker = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (sms.isAlive()||sender.isAlive()){
+
+                }
+                Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        checker.start();
+
+
     }
 
     private void storeData(String checkInTime){

@@ -15,7 +15,7 @@ import android.widget.Button;
 public class MainActivity extends AppCompatActivity {
     private static final int SMS_PERMISSION_CODE =0 ;
     Button btnNew, btnOut;
-    int perm=0,perm2=0;
+    int perm=0;
     SharedPreferences sharedpreferences;
     public static final String mypreference = "mypref";
 
