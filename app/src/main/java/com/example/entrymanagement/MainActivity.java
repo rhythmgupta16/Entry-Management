@@ -1,7 +1,9 @@
 package com.example.entrymanagement;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -14,11 +16,19 @@ public class MainActivity extends AppCompatActivity {
     private static final int SMS_PERMISSION_CODE =0 ;
     Button btnNew, btnOut;
     int perm=0,perm2=0;
+    SharedPreferences sharedpreferences;
+    public static final String mypreference = "mypref";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        sharedpreferences = getSharedPreferences(mypreference,
+                Context.MODE_PRIVATE);
+        if (sharedpreferences.contains("permission")) {
+            perm = sharedpreferences.getInt("permission",0 );
+        }
         if(!isSmsPermissionGranted())
         {
             requestReadAndSendSmsPermission();
@@ -78,9 +88,17 @@ public class MainActivity extends AppCompatActivity {
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
                     perm = 1;
+                    SharedPreferences.Editor editor = sharedpreferences.edit();
+                    editor.putInt("permission",perm);
+                    editor.commit();
+
 
                 } else {
                     perm = 0;
+                    SharedPreferences.Editor editor = sharedpreferences.edit();
+                    editor.putInt("permission",perm);
+                    editor.commit();
+
                 }
                 return;
             }

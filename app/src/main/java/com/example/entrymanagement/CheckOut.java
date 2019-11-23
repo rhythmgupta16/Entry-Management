@@ -48,7 +48,7 @@ public class CheckOut extends AppCompatActivity {
 
         permission = getIntent().getIntExtra("perm",0);
 
-        Toast.makeText(getApplicationContext(), "" + permission, Toast.LENGTH_LONG).show();
+        //Toast.makeText(getApplicationContext(), "" + permission, Toast.LENGTH_LONG).show();
 
 
         etOutVisPhone = findViewById(R.id.etOutVisPhone);

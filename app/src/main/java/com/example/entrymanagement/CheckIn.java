@@ -29,7 +29,7 @@ public class CheckIn extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_check_in);
         perm = getIntent().getIntExtra("perm",0);
-        Toast.makeText(getApplicationContext(), "" + perm, Toast.LENGTH_LONG).show();
+        //Toast.makeText(getApplicationContext(), "" + perm, Toast.LENGTH_LONG).show();
 
         findViews();
 
