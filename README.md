@@ -14,7 +14,9 @@ The Check Out asks for the Phone of the Visitor who wants to Check Out and sends
 Coming Soon!
 
 ## Screenshots
-Coming Soon!
+![Screenshot_20191123-210013](https://user-images.githubusercontent.com/41383322/69481132-714a3b80-0e34-11ea-8f44-e0a4953e7f8c.jpg)
+![Screenshot_20191123-210020](https://user-images.githubusercontent.com/41383322/69481135-74ddc280-0e34-11ea-8ff8-7bd432d13952.jpg)
+![Screenshot_20191123-210025](https://user-images.githubusercontent.com/41383322/69481139-77d8b300-0e34-11ea-9d03-40daf267354f.jpg)
 
 ## Contributing
 
