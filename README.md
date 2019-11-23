@@ -11,7 +11,7 @@ The Check In asks for the Visitor and Host details and sends an SMS and Email to
 The Check Out asks for the Phone of the Visitor who wants to Check Out and sends an SMS and Email to the Visitor giving the details of the visit.
 
 ## Video
-Coming Soon!
+https://drive.google.com/file/d/1klmpPAizh-9MVqLSSN_XcjcH8czZc90S/view?usp=sharing
 
 ## Screenshots
 ![Screenshot_20191123-210013](https://user-images.githubusercontent.com/41383322/69481132-714a3b80-0e34-11ea-8f44-e0a4953e7f8c.jpg)
