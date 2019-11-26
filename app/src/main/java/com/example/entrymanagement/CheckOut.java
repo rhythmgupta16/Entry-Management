@@ -168,6 +168,11 @@ public class CheckOut extends AppCompatActivity {
         return output;
     }
 
-
-
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+        Intent intent = new Intent(CheckOut.this, MainActivity.class);
+        startActivity(intent);
+    }
 }

@@ -138,4 +138,12 @@ public class CheckIn extends AppCompatActivity {
         demoRef.child(etVisPhone.getText().toString()).child("CheckInTime").setValue(checkInTime);
     }
 
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+        Intent intent = new Intent(CheckIn.this, MainActivity.class);
+        startActivity(intent);
+    }
 }
