@@ -1,34 +1,39 @@
 package com.example.entrymanagement;
 
-import android.app.PendingIntent;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telephony.SmsManager;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.app.ProgressDialog;
 import android.util.Log;
-import android.widget.Toast;
+import com.basgeekball.awesomevalidation.AwesomeValidation;
+import com.basgeekball.awesomevalidation.ValidationStyle;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-public class CheckIn extends AppCompatActivity {
+public class CheckIn extends AppCompatActivity implements View.OnClickListener {
     Button btnSubmit;
     EditText etVisEmail, etVisPhone, etVisName, etHostName, etHostEmail, etHostPhone, etHostAddress;
     DatabaseReference rootRef, demoRef;
     String checkInTime;
     int perm;
 
+    private AwesomeValidation awesomeValidation;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_check_in);
-        perm = getIntent().getIntExtra("perm",0);
+        awesomeValidation = new AwesomeValidation(ValidationStyle.BASIC);
+
+        perm = getIntent().getIntExtra("perm", 0);
         //Toast.makeText(getApplicationContext(), "" + perm, Toast.LENGTH_LONG).show();
 
         findViews();
@@ -39,18 +44,10 @@ public class CheckIn extends AppCompatActivity {
         //database reference pointing to demo node
         demoRef = rootRef.child("Details");
 
-        btnSubmit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                checkInTime = getRecentTime();
-                storeData(checkInTime);
-                sendMessage(checkInTime);
-            }
-        });
 
     }
 
-    private void findViews(){
+    private void findViews() {
         etVisEmail = findViewById(R.id.etVisEmail);
         etVisPhone = findViewById(R.id.etVisPhone);
         etVisName = findViewById(R.id.etVisName);
@@ -59,6 +56,16 @@ public class CheckIn extends AppCompatActivity {
         etHostPhone = findViewById(R.id.etHostPhone);
         etHostAddress = findViewById(R.id.etHostAddress);
         btnSubmit = findViewById(R.id.btnSubmit);
+        awesomeValidation.addValidation(this, R.id.etVisName, "^[A-Za-z\\s]{1,}[\\.]{0,1}[A-Za-z\\s]{0,}$", R.string.nameerror);
+        awesomeValidation.addValidation(this, R.id.etHostName, "^[A-Za-z\\s]{1,}[\\.]{0,1}[A-Za-z\\s]{0,}$", R.string.nameerror);
+        awesomeValidation.addValidation(this, R.id.etVisEmail, Patterns.EMAIL_ADDRESS, R.string.emailerror);
+        awesomeValidation.addValidation(this, R.id.etHostEmail, Patterns.EMAIL_ADDRESS, R.string.emailerror);
+        awesomeValidation.addValidation(this, R.id.etVisPhone, "^[2-9]{2}[0-9]{8}$", R.string.mobileerror);
+        awesomeValidation.addValidation(this, R.id.etHostPhone, "^[2-9]{2}[0-9]{8}$", R.string.mobileerror);
+        awesomeValidation.addValidation(this, R.id.etHostAddress, "^[#.0-9a-zA-Z\\s,-]+$", R.string.addresserror);
+
+        btnSubmit.setOnClickListener(this);
+
     }
 
     private String getRecentTime() {
@@ -96,13 +103,13 @@ public class CheckIn extends AppCompatActivity {
             @Override
             public void run() {
 
-                if(perm==1) {
+                if (perm == 1) {
                     SmsManager smsManager = SmsManager.getDefault();
                     smsManager.sendTextMessage("+91" + etHostPhone.getText().toString(), null, Data, null, null);
                 }
-                if(perm==0){
+                if (perm == 0) {
                     //Toast.makeText(getApplicationContext(), "Grant SMS permission first!", Toast.LENGTH_LONG).show();
-                    Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                     startActivity(intent);
                 }
             }
@@ -114,10 +121,10 @@ public class CheckIn extends AppCompatActivity {
         Thread checker = new Thread(new Runnable() {
             @Override
             public void run() {
-                while (sms.isAlive()||sender.isAlive()){
+                while (sms.isAlive() || sender.isAlive()) {
 
                 }
-                Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);
             }
         });
@@ -127,7 +134,7 @@ public class CheckIn extends AppCompatActivity {
 
     }
 
-    private void storeData(String checkInTime){
+    private void storeData(String checkInTime) {
         demoRef.child(etVisPhone.getText().toString()).child("VisName").setValue(etVisName.getText().toString());
         demoRef.child(etVisPhone.getText().toString()).child("VisEmail").setValue(etVisEmail.getText().toString());
         demoRef.child(etVisPhone.getText().toString()).child("VisPhone").setValue(etVisPhone.getText().toString());
@@ -146,4 +153,22 @@ public class CheckIn extends AppCompatActivity {
         Intent intent = new Intent(CheckIn.this, MainActivity.class);
         startActivity(intent);
     }
+
+    @Override
+    public void onClick(View view) {
+        if (view == btnSubmit) {
+            submitForm();
+        }
+    }
+
+
+    private void submitForm() {
+        if (awesomeValidation.validate()) {
+            checkInTime = getRecentTime();
+            storeData(checkInTime);
+            sendMessage(checkInTime);
+        }
+
+    }
+
 }

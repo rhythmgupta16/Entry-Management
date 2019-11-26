@@ -16,6 +16,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.basgeekball.awesomevalidation.AwesomeValidation;
+import com.basgeekball.awesomevalidation.ValidationStyle;
 import com.google.common.base.Joiner;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -30,7 +32,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 
-public class CheckOut extends AppCompatActivity {
+public class CheckOut extends AppCompatActivity implements View.OnClickListener{
 
     private static final String TAG ="hi" ;
     EditText etOutVisPhone;
@@ -40,11 +42,15 @@ public class CheckOut extends AppCompatActivity {
     Map<String, Object> map;
     int permission;
 
+    private AwesomeValidation awesomeValidation;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_check_out);
+
+        awesomeValidation = new AwesomeValidation(ValidationStyle.BASIC);
 
         permission = getIntent().getIntExtra("perm",0);
 
@@ -53,43 +59,16 @@ public class CheckOut extends AppCompatActivity {
 
         etOutVisPhone = findViewById(R.id.etOutVisPhone);
         btnSubmit = findViewById(R.id.btnSubmit);
+        awesomeValidation.addValidation(this, R.id.etOutVisPhone, "^[2-9]{2}[0-9]{8}$", R.string.mobileerror);
+
 
         //database reference pointing to root of database
         rootRef = FirebaseDatabase.getInstance().getReference();
 
         //database reference pointing to demo node
         demoRef = rootRef.child("Details");
+        btnSubmit.setOnClickListener(this);
 
-
-        btnSubmit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String phone = etOutVisPhone.getText().toString();
-
-                //Get Details
-                demoRef.child(phone).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        map = (Map<String, Object>) dataSnapshot.getValue();
-                        String mail = map.get("VisEmail").toString();
-                        String phone = map.get("VisPhone").toString();
-                        //Toast.makeText(getApplicationContext(), "" + mail, Toast.LENGTH_LONG).show();
-                        String data = map.toString();
-                        //Toast.makeText(getApplicationContext(), "" + data, Toast.LENGTH_LONG).show();
-                        checkOutTime = getRecentTime();
-                        storeData(checkOutTime);
-
-                        sendMessage(mail,data,phone);
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                    }
-                });
-
-
-            }
-        });
     }
 
     private void sendMessage(final String mail, final String data, final String phone) {
@@ -174,5 +153,43 @@ public class CheckOut extends AppCompatActivity {
         finish();
         Intent intent = new Intent(CheckOut.this, MainActivity.class);
         startActivity(intent);
+    }
+
+    private void submitForm() {
+        //first validate the form then move ahead
+        //if this becomes true that means validation is successfull
+        if (awesomeValidation.validate()) {
+
+            String phone = etOutVisPhone.getText().toString();
+
+            //Get Details
+            demoRef.child(phone).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    map = (Map<String, Object>) dataSnapshot.getValue();
+                    String mail = map.get("VisEmail").toString();
+                    String phone = map.get("VisPhone").toString();
+                    //Toast.makeText(getApplicationContext(), "" + mail, Toast.LENGTH_LONG).show();
+                    String data = map.toString();
+                    //Toast.makeText(getApplicationContext(), "" + data, Toast.LENGTH_LONG).show();
+                    checkOutTime = getRecentTime();
+                    storeData(checkOutTime);
+
+                    sendMessage(mail,data,phone);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            });
+
+        }
+    }
+
+    @Override
+    public void onClick(View view) {
+        if (view == btnSubmit) {
+            submitForm();
+        }
     }
 }

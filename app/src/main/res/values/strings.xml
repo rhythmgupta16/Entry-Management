@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Entry Management</string>
+    <string name="nameerror">Enter a valid name</string>
+    <string name="emailerror">Enter a valid email</string>
+    <string name="mobileerror">Enter a valid mobile</string>
+    <string name="dateerror">Enter a valid date</string>
+    <string name="ageerror">Enter a valid age</string>
+    <string name="addresserror">Enter a valid address</string>
 </resources>
