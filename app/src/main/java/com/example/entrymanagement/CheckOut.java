@@ -78,7 +78,7 @@ public class CheckOut extends AppCompatActivity implements View.OnClickListener{
            //     "\nAddress Visited: " + map.get("HostAddress");
         //Toast.makeText(getApplicationContext(),"" + Data, Toast.LENGTH_LONG).show();
         final ProgressDialog dialog = new ProgressDialog(CheckOut.this);
-        dialog.setTitle("Sending Email and SMS");
+        dialog.setTitle("Sending Email");
         dialog.setMessage("Please wait");
         dialog.setCancelable(false);
         dialog.show();
@@ -105,7 +105,7 @@ public class CheckOut extends AppCompatActivity implements View.OnClickListener{
             public void run() {
                 if(permission==1) {
 
-                    Log.e(TAG, "run: 00000" );
+                    //Log.e(TAG, "run: 00000" );
                     SmsManager smsManager = SmsManager.getDefault();
                     smsManager.sendTextMessage("+91" + phone, null,""+data.substring(1,160), null, null);
 
