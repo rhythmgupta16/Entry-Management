@@ -81,8 +81,10 @@ public class CheckIn extends AppCompatActivity implements View.OnClickListener {
         final String Data = "Visitor Details\n\n" + "Visitor Name: " + etVisName.getText().toString() + "\nVisitor Email: " +
                 etVisEmail.getText().toString() + "\nVisitor Phone: " + etVisPhone.getText().toString() + "\nCheckIn Time: " + checkInTime;
         final ProgressDialog dialog = new ProgressDialog(CheckIn.this);
-        dialog.setTitle("Sending Email");
+        dialog.setTitle("Sending Email and SMS");
         dialog.setMessage("Please wait");
+        dialog.setCancelable(false);
+        dialog.show();
         final Thread sender = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -124,6 +126,7 @@ public class CheckIn extends AppCompatActivity implements View.OnClickListener {
                 while (sms.isAlive() || sender.isAlive()) {
 
                 }
+                dialog.dismiss();
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);
             }

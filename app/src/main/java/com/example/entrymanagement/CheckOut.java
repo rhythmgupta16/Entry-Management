@@ -77,7 +77,11 @@ public class CheckOut extends AppCompatActivity implements View.OnClickListener{
          //       "\nCheckIn Time: " + map.get("CheckInTime") + "\nCheckOut Time: " + map.get("VisCheckOutTime") + "\nHost Name: " + map.get("HostName") +
            //     "\nAddress Visited: " + map.get("HostAddress");
         //Toast.makeText(getApplicationContext(),"" + Data, Toast.LENGTH_LONG).show();
-
+        final ProgressDialog dialog = new ProgressDialog(CheckOut.this);
+        dialog.setTitle("Sending Email and SMS");
+        dialog.setMessage("Please wait");
+        dialog.setCancelable(false);
+        dialog.show();
 
 
         final Thread sender = new Thread(new Runnable() {
@@ -126,6 +130,7 @@ public class CheckOut extends AppCompatActivity implements View.OnClickListener{
                 while (sms.isAlive()||sender.isAlive()){
 
                 }
+                dialog.dismiss();
                 Intent intent = new Intent(getApplicationContext(),MainActivity.class);
                 startActivity(intent);
             }
