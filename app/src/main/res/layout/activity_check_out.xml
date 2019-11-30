@@ -33,6 +33,7 @@
         android:background="@color/colorAccent"
         android:text="Check Out"
         android:textColor="#FFFFFF"
+        android:layout_marginBottom="20dp"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
