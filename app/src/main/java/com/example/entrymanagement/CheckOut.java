@@ -78,7 +78,7 @@ public class CheckOut extends AppCompatActivity implements View.OnClickListener{
            //     "\nAddress Visited: " + map.get("HostAddress");
         //Toast.makeText(getApplicationContext(),"" + Data, Toast.LENGTH_LONG).show();
         final ProgressDialog dialog = new ProgressDialog(CheckOut.this);
-        dialog.setTitle("Sending Email");
+        dialog.setTitle("Sending Email and SMS");
         dialog.setMessage("Please wait");
         dialog.setCancelable(false);
         dialog.show();
